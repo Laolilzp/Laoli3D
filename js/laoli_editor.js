@@ -224,7 +224,7 @@ app.registerExtension({
                                 <h3 style="color:#2196f3; margin-top:25px; margin-bottom:15px; border-left:4px solid #2196f3; padding-left:10px;">⌨️ 快捷键</h3>
                                 <ul style="line-height:1.8; color:#ccc; font-size:13px; padding-left:20px;">
                                     <li><kbd style="background:#333;padding:2px 6px;border-radius:4px">R</kbd> 旋转 <kbd>S</kbd> 缩放 <kbd>W</kbd> 移动。</li>
-                                    <li><kbd>↑↓←→</kbd> 微调骨骼旋转。</li>
+                                    <li><kbd>↑↓、←→、+-</kbd> 微调骨骼旋转。</li>
                                 </ul>
                             </div>
                             <div>
