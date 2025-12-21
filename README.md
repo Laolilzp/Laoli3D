@@ -3,6 +3,7 @@
 
 <img width="2813" height="1277" alt="Laoli3D" src="https://github.com/user-attachments/assets/1a4c3e4e-d6c7-4ccc-bd8a-de125ecb8f94" />
 
+请确保路径是*\custom_nodes\Laoli3D，而不是Laoli3D-main。因为没写动态地址，插件名字不一致会不能正常使用。
 
 ## 🎯 目的：为什么开发这个插件？
 
@@ -71,6 +72,37 @@
     ComfyUI/custom_nodes/Laoli3D/js/assets/你的模型.glb
     ```
 3.  刷新 ComfyUI 网页，在编辑器的顶部下拉菜单中即可看到新模型。
+
+QA：
+
+> **无需额外依赖 (No Extra Dependencies)**:
+> 本插件仅使用 ComfyUI 原生环境库 (torch, numpy, pillow) 和内置的 Three.js 库，无需安装任何额外的 Python 包，解压即可运行。
+
+### 1. 是否需要用户安装新依赖？
+**不需要。** 这是一个非常“绿色”的插件。
+
+*   **Python 后端 (`__init__.py`)**：
+    *   使用的库包括：`os`, `json`, `base64`, `shutil`, `io`（这些是 Python 自带的标准库）。
+    *   `torch`, `numpy`, `PIL` (Pillow), `aiohttp`, `server`（这些是 ComfyUI 运行 **必须** 具备的基础环境，用户只要能运行 ComfyUI，就一定有这些库）。
+    *   **结论**：不需要提供 `requirements.txt` 文件，也不需要用户运行 `pip install`。
+
+*   **JavaScript 前端 (`js/` 文件夹)**：
+    *   使用了 `three.module.js`, `OrbitControls.js` 等。
+    *   **关键点**：这些文件都已经包含在 `js` 文件夹里了（本地引用）。用户不需要去下载 Three.js，也不需要联网去加载 CDN。
+    *   **结论**：前端是自包含的，开箱即用。
+
+### 2. 会不会与其他插件冲突？
+**冲突概率极低（几乎为零）。**
+
+*   **Python 类名冲突**：
+    *   节点类名是 `Laoli_3DPoseEditor`，分类是 `Laoli3D`。只要没有其他开发者恰好也叫 Laoli 并且写了同名节点，就不会冲突。ComfyUI 是通过类名映射加载节点的。
+*   **前端代码冲突**：
+    *   **变量隔离**：JS 代码使用了 ES Module (`import ...`), 这意味着变量（如 `scene`, `camera`）都运行在模块作用域内，不会污染全局变量 `window`。
+    *   **Three.js 版本**：因为引用的是本地的 `./three.module.js`，即使其他插件也用了 Three.js（比如用了不同版本），因为路径不同，它们互不干扰。
+    *   **DOM 元素 ID**：在创建 UI 时使用了 `laoli-3d-container`, `cropLayer` 等 ID。除非有其他插件使用了完全一样的 ID（概率极低），否则 CSS 和 DOM 操作不会冲突。
+
+### 3. 唯一的“软性”限制（不算冲突，但值得注意）
+*   **WebGL 上下文限制**：浏览器对同时运行的 WebGL 上下文数量有限制（通常是 16 个左右）。如果用户在同一个工作流里一次性打开了 20 个 `Laoli 3D Pose Editor` 节点，或者混用了其他大量 3D 预览节点，可能会导致部分窗口黑屏。这是浏览器机制决定的。
 
 ## ⚠️ 不足与已知问题 (Limitations)
 
