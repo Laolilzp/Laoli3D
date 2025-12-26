@@ -2,6 +2,8 @@
 
 
 <img width="2813" height="1277" alt="Laoli3D" src="https://github.com/user-attachments/assets/1a4c3e4e-d6c7-4ccc-bd8a-de125ecb8f94" />
+<img width="2463" height="1491" alt="b7ba1565-41b3-4828-9e46-e47184d89db3" src="https://github.com/user-attachments/assets/bf63a426-a01f-4d5b-834e-f60ad13ff381" />
+
 
 请确保路径是*\custom_nodes\Laoli3D，而不是Laoli3D-main。因为没写动态地址，插件名字不一致会不能正常使用。
 模型优先选用HanMeimei.glb。
