@@ -28,13 +28,12 @@
     *   一键输出 OpenPose 图、深度图 (Depth)、法线图 (Normal) 及蒙版。
 
 ---
-
 ## 🛠️ 安装指南 (Installation)
 
 ### 1. 安装插件
 进入你的 ComfyUI `custom_nodes` 目录：
 
-```bash
+***
 cd ComfyUI/custom_nodes
 git clone https://github.com/Laolilzp/Laoli3D.git
 cd Laoli3D
@@ -105,3 +104,4 @@ The AI capabilities of this project are built upon the amazing work of the resea
 本项目遵循 MIT License，但在使用 AI 模型（HMR2/HaMeR）相关功能时，请务必遵守其原始协议（通常为 CC-BY-NC 4.0，仅限非商业研究用途）。
 
 ---
+
