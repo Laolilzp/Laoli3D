@@ -1,0 +1,9 @@
+ultralytics
+smplx
+yacs
+timm
+einops
+scikit-image
+scipy
+chumpy
+mediapipe

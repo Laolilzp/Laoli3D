@@ -2,29 +2,36 @@ import os
 import json
 import base64
 import shutil
-import torch
-import numpy as np
-from PIL import Image
-from io import BytesIO
 import server
 from aiohttp import web
+from .laoli_node import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS
 
-# 路径配置
+# ================= 路径配置 =================
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 POSE_DIR = os.path.join(CURRENT_DIR, "pose")
 JS_DIR = os.path.join(CURRENT_DIR, "js")
 ASSETS_DIR = os.path.join(JS_DIR, "assets")
 
-if not os.path.exists(POSE_DIR): os.makedirs(POSE_DIR)
+# 启动时自动创建文件夹结构
+# 分别创建 Body(全身) 和 Hands(手势) 的默认文件夹
+os.makedirs(os.path.join(POSE_DIR, "Body", "Default"), exist_ok=True)
+os.makedirs(os.path.join(POSE_DIR, "Hands", "Default"), exist_ok=True)
+os.makedirs(ASSETS_DIR, exist_ok=True)
 
-# === API 接口 ===
+WEB_DIRECTORY = "./js"
+
+# ================= 接口 =================
 @server.PromptServer.instance.routes.post("/laoli/save_pose")
 async def save_pose(request):
     try:
         data = await request.json()
+        # 获取库类型：'Body' 或 'Hands'，默认为 Body
+        lib_type = data.get("libType", "Body") 
         cat = data.get("category", "Default")
         name = data.get("name", "NewPose")
-        path = os.path.join(POSE_DIR, cat)
+        
+        # 路径指向对应的子文件夹 (pose/Body/... 或 pose/Hands/...)
+        path = os.path.join(POSE_DIR, lib_type, cat)
         if not os.path.exists(path): os.makedirs(path, exist_ok=True)
         
         with open(os.path.join(path, f"{name}.json"), "w", encoding="utf-8") as f:
@@ -32,19 +39,24 @@ async def save_pose(request):
             
         img_data = data.get("image")
         if img_data:
+            if "," in img_data: img_data = img_data.split(",")[1]
             with open(os.path.join(path, f"{name}.png"), "wb") as f:
-                f.write(base64.b64decode(img_data.split(",")[1]))
+                f.write(base64.b64decode(img_data))
                 
         return web.json_response({"status": "success"})
-    except Exception as e:
-        return web.json_response({"status": "error", "message": str(e)})
+    except Exception as e: return web.json_response({"status": "error", "message": str(e)})
 
 @server.PromptServer.instance.routes.get("/laoli/get_library")
 async def get_library(request):
     lib = {}
-    if os.path.exists(POSE_DIR):
-        for cat in os.listdir(POSE_DIR):
-            p = os.path.join(POSE_DIR, cat)
+    # 获取库类型参数，决定读取哪个文件夹
+    lib_type = request.rel_url.query.get("libType", "Body")
+    
+    target_dir = os.path.join(POSE_DIR, lib_type)
+    
+    if os.path.exists(target_dir):
+        for cat in os.listdir(target_dir):
+            p = os.path.join(target_dir, cat)
             if os.path.isdir(p):
                 lib[cat] = []
                 for f in os.listdir(p):
@@ -55,7 +67,7 @@ async def get_library(request):
                             with open(img_path, "rb") as ifile:
                                 img_url = "data:image/png;base64," + base64.b64encode(ifile.read()).decode('utf-8')
                         try:
-                            with open(os.path.join(p, f), "r") as jf:
+                            with open(os.path.join(p, f), "r", encoding="utf-8") as jf:
                                 lib[cat].append({"name": f[:-5], "thumbnail": img_url, "data": json.load(jf)})
                         except: pass
     return web.json_response(lib)
@@ -65,36 +77,40 @@ async def manage_library(request):
     try:
         data = await request.json()
         act = data.get("action")
+        # 获取库类型，确定操作根目录
+        lib_type = data.get("libType", "Body") 
+        root = os.path.join(POSE_DIR, lib_type)
+        
+        # 确保根目录存在
+        if not os.path.exists(root): os.makedirs(root, exist_ok=True)
+        
         if act == "create_cat":
-            p = os.path.join(POSE_DIR, data.get("name"))
+            p = os.path.join(root, data.get("name"))
             if not os.path.exists(p): os.makedirs(p)
         elif act == "rename_cat":
-            os.rename(os.path.join(POSE_DIR, data.get("old")), os.path.join(POSE_DIR, data.get("new")))
+            os.rename(os.path.join(root, data.get("old")), os.path.join(root, data.get("new")))
         elif act == "del_cat":
-            shutil.rmtree(os.path.join(POSE_DIR, data.get("category")))
+            shutil.rmtree(os.path.join(root, data.get("category")))
         elif act == "rename_pose":
-            d = os.path.join(POSE_DIR, data.get("category"))
+            d = os.path.join(root, data.get("category"))
             base = os.path.join(d, data.get("old"))
             new_base = os.path.join(d, data.get("new"))
-            os.rename(base+".json", new_base+".json")
+            if os.path.exists(base+".json"): os.rename(base+".json", new_base+".json")
             if os.path.exists(base+".png"): os.rename(base+".png", new_base+".png")
         elif act == "del_pose":
-            d = os.path.join(POSE_DIR, data.get("category"))
+            d = os.path.join(root, data.get("category"))
             n = data.get("name")
-            p = os.path.join(d, f"{n}.json")
-            if os.path.exists(p): os.remove(p)
-            p_img = os.path.join(d, f"{n}.png")
-            if os.path.exists(p_img): os.remove(p_img)
+            if os.path.exists(os.path.join(d, f"{n}.json")): os.remove(os.path.join(d, f"{n}.json"))
+            if os.path.exists(os.path.join(d, f"{n}.png")): os.remove(os.path.join(d, f"{n}.png"))
         elif act == "move_pose":
-            src = os.path.join(POSE_DIR, data.get("src_category"))
-            tgt = os.path.join(POSE_DIR, data.get("tgt_category"))
+            src = os.path.join(root, data.get("src_category"))
+            tgt = os.path.join(root, data.get("tgt_category"))
             n = data.get("name")
-            shutil.move(os.path.join(src, f"{n}.json"), os.path.join(tgt, f"{n}.json"))
-            if os.path.exists(os.path.join(src, f"{n}.png")):
-                shutil.move(os.path.join(src, f"{n}.png"), os.path.join(tgt, f"{n}.png"))
+            os.makedirs(tgt, exist_ok=True)
+            if os.path.exists(os.path.join(src, f"{n}.json")): shutil.move(os.path.join(src, f"{n}.json"), os.path.join(tgt, f"{n}.json"))
+            if os.path.exists(os.path.join(src, f"{n}.png")): shutil.move(os.path.join(src, f"{n}.png"), os.path.join(tgt, f"{n}.png"))
         return web.json_response({"status": "success"})
-    except Exception as e:
-        return web.json_response({"status": "error", "message": str(e)})
+    except Exception as e: return web.json_response({"status": "error", "message": str(e)})
 
 @server.PromptServer.instance.routes.get("/laoli/get_models")
 async def get_models(request):
@@ -102,45 +118,4 @@ async def get_models(request):
     files = [f for f in os.listdir(ASSETS_DIR) if f.lower().endswith(".glb")]
     return web.json_response(files)
 
-# === 节点定义 ===
-class Laoli_3DPoseEditor:
-    @classmethod
-    def INPUT_TYPES(s):
-        return {
-            "required": {
-                "client_data": ("STRING", {"default": "", "multiline": False, "hidden": True}),
-            },
-            "optional": {
-                "reference_image": ("IMAGE",),
-            },
-        }
-
-    RETURN_TYPES = ("IMAGE", "IMAGE", "IMAGE", "IMAGE", "STRING")
-    RETURN_NAMES = ("Render_RGB", "OpenPose_Map", "Depth_Map", "Normal_Map", "Pose_JSON")
-    FUNCTION = "run"
-    CATEGORY = "Laoli3D"
-
-    def run(self, client_data="", reference_image=None):
-        empty = torch.zeros((1, 512, 512, 3), dtype=torch.float32)
-        if not client_data: return (empty, empty, empty, empty, "{}")
-        
-        try:
-            data = json.loads(client_data)
-            def decode(b64):
-                if not b64 or "," not in b64: return empty
-                img = Image.open(BytesIO(base64.b64decode(b64.split(",")[1]))).convert("RGB")
-                return torch.from_numpy(np.array(img).astype(np.float32) / 255.0).unsqueeze(0)
-
-            return (
-                decode(data.get("rgb")),
-                decode(data.get("pose_img")),
-                decode(data.get("depth")),
-                decode(data.get("normal")),
-                json.dumps(data.get("pose_data", {}))
-            )
-        except:
-            return (empty, empty, empty, empty, "{}")
-
-NODE_CLASS_MAPPINGS = { "Laoli_3DPoseEditor": Laoli_3DPoseEditor }
-NODE_DISPLAY_NAME_MAPPINGS = { "Laoli_3DPoseEditor": "Laoli 3D Pose Editor" }
-WEB_DIRECTORY = "./js"
+__all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS", "WEB_DIRECTORY"]

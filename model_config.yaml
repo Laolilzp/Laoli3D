@@ -1,0 +1,35 @@
+
+MODEL:
+  IMAGE_SIZE: 256
+  BACKBONE:
+    TYPE: 'vit'
+    NAME: 'vit_h'
+    PRETRAINED_WEIGHTS: 'models/vit_h_14_lc_swag_e2e_v1.pth'
+  MANO_HEAD:
+    TYPE: 'transformer_decoder'
+    IN_CHANNELS: 1280
+    TRANSFORMER_DECODER:
+      depth: 6
+      heads: 8
+      mlp_dim: 1024
+      dim_head: 64
+      dropout: 0.0
+      emb_dropout: 0.0
+      norm: 'layer'
+      context_dim: 1280
+LOSS_WEIGHTS:
+  VERTICES: 1.0
+  JOINTS_3D: 1.0
+  JOINTS_2D: 1.0
+  GLOBAL_ORIENT: 1.0
+  HAND_POSE: 1.0
+  BETAS: 1.0
+  ADVERSARIAL: 0.0
+  KEYPOINTS_3D: 1.0
+  KEYPOINTS_2D: 1.0
+MANO:
+  MODEL_PATH: 'D:/ComfyUI-aki-v2/ComfyUI/custom_nodes/Laoli3D/src/hamer/data'
+  MEAN_PARAMS: 'D:/ComfyUI-aki-v2/ComfyUI/custom_nodes/Laoli3D/src/hamer/data/mano_mean_params.npz'
+  NUM_HAND_JOINTS: 15
+DATA:
+  IMG_SIZE: 256
