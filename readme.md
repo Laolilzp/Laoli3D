@@ -35,8 +35,11 @@
 
 ***
 cd ComfyUI/custom_nodes
+
 git clone https://github.com/Laolilzp/Laoli3D.git
+
 cd Laoli3D
+
 pip install -r requirements.txt
 ***
 
@@ -47,6 +50,7 @@ pip install -r requirements.txt
 *   **HaMeR**: `hamer_v1a.pth`
 
 hamer_v1a.pth下载地址 (推荐 - 德州奥斯汀大学官网直链):
+
 https://www.cs.utexas.edu/~pavlakos/hamer/data/hamer_demo_data.tar.gz
 注意：这是一个 .tar.gz 压缩包。[2]
 操作：下载后解压，在文件夹里找到 checkpoints 目录，里面会有 hamer_v1a.pth。
@@ -54,12 +58,16 @@ https://www.cs.utexas.edu/~pavlakos/hamer/data/hamer_demo_data.tar.gz
 
 
 vit_h_14_lc_swag_e2e_v1.pth
+
 下载地址：https://dl.fbaipublicfiles.com/viit/vit_h_14_lc_swag_e2e_v1.pth (这是 Facebook 官方源)
 存放位置：下载后放在 C:\Users\你的用户名\.cache\torch\hub\checkpoints\ 下。建议先让它自动下载，实在不行再手动放。
 
 ComfyUI\custom_nodes\Laoli3D\src\hamer\data\
+
 MANO_LEFT.pkl
+
 MANO_RIGHT.pkl
+
 下载地址 https://mano.is.tue.mpg.de/download.php
 <img width="955" height="879" alt="屏幕截图 2026-01-01 122511" src="https://github.com/user-attachments/assets/42a42b16-c932-4620-ba42-cf32e46a6be0" />
 
@@ -104,4 +112,5 @@ The AI capabilities of this project are built upon the amazing work of the resea
 本项目遵循 MIT License，但在使用 AI 模型（HMR2/HaMeR）相关功能时，请务必遵守其原始协议（通常为 CC-BY-NC 4.0，仅限非商业研究用途）。
 
 ---
+
 
