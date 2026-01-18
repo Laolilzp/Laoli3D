@@ -1,0 +1,15 @@
+
+MODEL:
+  IMAGE_SIZE: 256
+  BACKBONE:
+    TYPE: 'vit'
+    NAME: 'vit_h'
+  MANO_HEAD:
+    TYPE: 'transformer_decoder'
+  LOSS_WEIGHTS:
+    VERTICES: 1.0
+    JOINTS_3D: 1.0
+    JOINTS_2D: 1.0
+    GLOBAL_ORIENT: 1.0
+    HAND_POSE: 1.0
+    BETAS: 1.0
