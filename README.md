@@ -1,127 +1,107 @@
-# ComfyUI Laoli 3D Pose Editor (老李 3D 姿势编辑器)
+# ComfyUI Laoli 3D Pose Editor
+（身体手部姿态识别、编辑、输出controlnet、编辑模型参考图，自动生成编辑器布光系统的光影提示词）
+
+<img width="1009" height="553" alt="Laoli3D png" src="https://github.com/user-attachments/assets/d6078bcc-1551-4530-9d57-630d082a1a19" />
 
 
-<img width="2813" height="1277" alt="Laoli3D" src="https://github.com/user-attachments/assets/1a4c3e4e-d6c7-4ccc-bd8a-de125ecb8f94" />
-<img width="2463" height="1491" alt="b7ba1565-41b3-4828-9e46-e47184d89db3" src="https://github.com/user-attachments/assets/bf63a426-a01f-4d5b-834e-f60ad13ff381" />
+**Laoli3D** 是一个ComfyUI 插件，提供了一个强大的内置 3D 编辑器。它不仅可以手动调节人物姿势、手指细节，还拥有专业的布光系统，并集成了最先进的 AI 姿势估算模型（HMR2 & HaMeR），能够从图片中精准提取 3D 姿态。
 
+---
 
-请确保路径是*\custom_nodes\Laoli3D，而不是Laoli3D-main。因为没写动态地址，插件名字不一致会不能正常使用。
-模型优先选用HanMeimei.glb。
+## ✨ 核心功能 (Key Features)
 
-## 🎯 目的：为什么开发这个插件？
+*   **🦴 3D 姿势编辑 (FK模式)**：
+    *   通过旋转圆环精准控制每一个关节。
+    *   支持全身骨骼及手指关节的精细调节。
+*   **💡 专业影棚布光 (Studio Lighting)**：
+    *   内置 **伦勃朗、蝴蝶光、剪影** 等专业摄影预设。
+    *   支持独立调节主光、辅光、轮廓光和环境光的强度、角度与颜色。
+    *   自动生成对应的光影提示词（Prompt）。
+*   **🤖 AI 姿势识别 (State-of-the-Art)**：
+    *   集成 **HMR2 (4DHumans)**：精准还原全身 3D 姿态。
+    *   集成 **HaMeR**：目前最强的单目手部重建模型，完美解决手指扭曲问题。
+    *   支持从上传的图片中一键提取姿势并应用到 3D 模型。
+*   **📂 动作库系统 (Pose Library)**：
+    *   内置全身与手势库。
+    *   支持保存自定义动作，支持智能手势镜像（点选左手即应用到左手）。
+*   **📷 多通道输出**：
+    *   一键输出 OpenPose 图、深度图 (Depth)、法线图 (Normal) 及蒙版。
 
-在使用 Comfyui 进行 AI 绘图时，我们经常面临一个痛点：**提示词（Prompt）无法精准控制人物的动作**。
+---
 
-无论你如何详细地描述“左手举高45度”、“右腿后撤半步”，AI 往往难以理解具体的空间关系，导致生成的肢体扭曲或动作不达标。现有的 ControlNet 虽然强大，但寻找完美的参考图往往是大海捞针。
+## 🛠️ 安装指南 (Installation)
 
-**Laoli 3D Pose Editor** 旨在解决这个问题。它在 ComfyUI 内部提供了一个轻量级、可视化的 3D 编辑环境，让你像玩游戏捏人一样，精准地调整人物的每一个关节，并直接生成 ControlNet 所需的各种控制图。**所见即所得，让 AI 严格按照你的意愿画图。**
+### 1. 安装插件
+进入你的 ComfyUI `custom_nodes` 目录：
 
-## ✨ 核心特点
-
-*   **👥 多人同屏编辑**：支持在同一场景中添加无限数量的角色，轻松构建复杂的双人互动或多人构图场景。
-*   **🖼️ 多种 ControlNet 输出**：一次渲染，同时输出四种图像，满足不同 ControlNet 模型的需求：
-    *   **RGB 渲染图**：所见即所得的预览。
-    *   **OpenPose 骨骼图**：精准对应标准 OpenPose 格式。
-    *   **Depth 深度图**：用于控制空间前后关系。
-    *   **Normal 法线图**：用于控制物体表面凹凸细节。
-*   **🧩 自定义模型导入**：不局限于内置模型！支持导入你自己的 `.glb` 格式 3D 模型（如 Mixamo 角色或动漫模型），只需放入本插件js\assets文件夹即可识别。
-*   **📷 高清框选截图**：内置高级截图功能，支持**比例锁定**和**视口偏移**。无论你在屏幕上怎么缩放，都能截取指定分辨率（如 1024x1024）的高清局部特写，且无黑边、无拉伸。
-*   **💾 状态自动保存**：刷新网页或重启 ComfyUI，场景中的人物、姿势和位置会自动恢复，无需重新摆放。
-
-## 🛠️ 功能列表
-
-*   **骨骼操作**：支持旋转 (Rotate)、缩放 (Scale)。
-*   **全局位移**：支持移动人物在场景中的 X/Y/Z 位置及整体缩放。
-*   **姿势库**：内置姿势保存与读取功能，建立你自己的动作素材库。
-*   **UI 交互**：优化的 3D 视口，支持鼠标左键旋转、右键平移、滚轮缩放。
-
-## 🚀 安装方法
-
-1.  进入你的 ComfyUI 插件目录：
-    ```bash
-    cd ComfyUI/custom_nodes/
-    ```
-2.  克隆本仓库：
-    ```bash
-    git clone https://github.com/Laolilzp/Laoli3D.git
-    ```
-3.  重启 ComfyUI。
-
-## 📖 使用指南
-
-### 1. 基础操作
-*   **添加节点**：在 ComfyUI 画布中右键 -> `Laoli3D` -> `Laoli 3D Pose Editor`。
-*   **选择关节**：在 3D 视窗中直接点击人物身上的蒙皮，或在左侧列表中选择骨骼。
-*   **快捷键**：
-    *   `R`：切换到旋转模式 (Rotate)。
-    *   `S`：切换到缩放模式 (Scale)。
-    *   `W`：切换到移动模式 (仅限根骨骼 Hips/Root)。
-    *   `↑ ↓、← →、+-`：微调选中骨骼的角度。
-*   **相机控制**：
-    *   左键拖拽（空白处）：旋转视角。
-    *   右键拖拽：平移视角。
-    *   滚轮：缩放视角。
-
-### 2. 输出与 ControlNet 连接
-节点提供 4 个图像输出端口，建议连接方式（待测试。。。）：
-*   `OpenPose_Map` -> 连接到 ControlNet (预处理器选择 `None` 或手动指定 OpenPose)。
-*   `Depth_Map` -> 连接到 ControlNet (预处理器选择 `None`，模型选 Depth)。
-*   `Normal_Map` -> 连接到 ControlNet (预处理器选择 `None`，模型选 Normal)。
-
-### 3. 如何导入自定义模型
-1.  准备 `.glb` 格式的 3D 模型文件（建议带有标准骨骼绑定，如 Mixamo 导出的模型）。
-2.  将文件放入插件目录下的 `assets` 文件夹：
-    ```
-    ComfyUI/custom_nodes/Laoli3D/js/assets/你的模型.glb
-    ```
-3.  刷新 ComfyUI 网页，在编辑器的顶部下拉菜单中即可看到新模型。
-
-QA：
-
-> **无需额外依赖 (No Extra Dependencies)**:
-> 本插件仅使用 ComfyUI 原生环境库 (torch, numpy, pillow) 和内置的 Three.js 库，无需安装任何额外的 Python 包，解压即可运行。
-
-### 1. 是否需要用户安装新依赖？
-**不需要。** 这是一个非常“绿色”的插件。
-
-*   **Python 后端 (`__init__.py`)**：
-    *   使用的库包括：`os`, `json`, `base64`, `shutil`, `io`（这些是 Python 自带的标准库）。
-    *   `torch`, `numpy`, `PIL` (Pillow), `aiohttp`, `server`（这些是 ComfyUI 运行 **必须** 具备的基础环境，用户只要能运行 ComfyUI，就一定有这些库）。
-    *   **结论**：不需要提供 `requirements.txt` 文件，也不需要用户运行 `pip install`。
-
-*   **JavaScript 前端 (`js/` 文件夹)**：
-    *   使用了 `three.module.js`, `OrbitControls.js` 等。
-    *   **关键点**：这些文件都已经包含在 `js` 文件夹里了（本地引用）。用户不需要去下载 Three.js，也不需要联网去加载 CDN。
-    *   **结论**：前端是自包含的，开箱即用。
-
-### 2. 会不会与其他插件冲突？
-**冲突概率极低（几乎为零）。**
-
-*   **Python 类名冲突**：
-    *   节点类名是 `Laoli_3DPoseEditor`，分类是 `Laoli3D`。只要没有其他开发者恰好也叫 Laoli 并且写了同名节点，就不会冲突。ComfyUI 是通过类名映射加载节点的。
-*   **前端代码冲突**：
-    *   **变量隔离**：JS 代码使用了 ES Module (`import ...`), 这意味着变量（如 `scene`, `camera`）都运行在模块作用域内，不会污染全局变量 `window`。
-    *   **Three.js 版本**：因为引用的是本地的 `./three.module.js`，即使其他插件也用了 Three.js（比如用了不同版本），因为路径不同，它们互不干扰。
-    *   **DOM 元素 ID**：在创建 UI 时使用了 `laoli-3d-container`, `cropLayer` 等 ID。除非有其他插件使用了完全一样的 ID（概率极低），否则 CSS 和 DOM 操作不会冲突。
-
-### 3. 唯一的“软性”限制（不算冲突，但值得注意）
-*   **WebGL 上下文限制**：浏览器对同时运行的 WebGL 上下文数量有限制（通常是 16 个左右）。如果用户在同一个工作流里一次性打开了 20 个 `Laoli 3D Pose Editor` 节点，或者混用了其他大量 3D 预览节点，可能会导致部分窗口黑屏。这是浏览器机制决定的。
-
-## ⚠️ 不足与已知问题 (Limitations)
-
-虽然本插件已经能够满足大部分绘图辅助需求，但仍有以下改进空间，欢迎社区贡献：
-
-1.  **没有反向动力学 (IK)**：目前采用正向动力学 (FK)，即调整手部位置需要分别调整大臂、小臂和手掌的角度，无法直接拖拽手掌带动胳膊（这也是为了保证骨骼旋转的绝对精准）。
-2.  **骨骼命名兼容性**：目前主要适配 Mixamo 和标准 VRM/GLTF 骨骼命名规范。如果导入的自定义模型骨骼命名非常规，可能会导致无法识别或控制。
-3.  **浏览器性能**：场景中如果放入过多高面数的 3D 模型，可能会导致网页端卡顿，建议使用低模。
-4.  **撤销/重做**：暂不支持 Ctrl+Z 撤销操作，请谨慎调整或勤用保存功能。
-
-## 🤝 贡献 (Contributing)
-
-欢迎提交 Issues 和 Pull Requests！如果你有更好的想法或发现了 Bug，请随时告诉我。
-
-## 📄 许可证 (License)
-
-[MIT License](LICENSE)
-
+```bash
+cd ComfyUI/custom_nodes
+git clone https://github.com/Laolilzp/Laoli3D.git
+cd Laoli3D
+pip install -r requirements.txt
 ***
+
+### 2. 模型下载
+插件首次运行 AI 识别功能时，会自动尝试从 HuggingFace 下载以下模型。如果下载失败，请手动下载并放入 `models/` 目录：
+
+*   **HMR2**: `hmr2a_r50_773975.pth`
+*   **HaMeR**: `hamer_v1a.pth`
+
+hamer_v1a.pth下载地址 (推荐 - 德州奥斯汀大学官网直链):
+https://www.cs.utexas.edu/~pavlakos/hamer/data/hamer_demo_data.tar.gz
+注意：这是一个 .tar.gz 压缩包。[2]
+操作：下载后解压，在文件夹里找到 checkpoints 目录，里面会有 hamer_v1a.pth。
+移动：只把 hamer_v1a.pth 拿出来，放到你的 ComfyUI\custom_nodes\Laoli3D\models\ 下。
+
+
+vit_h_14_lc_swag_e2e_v1.pth
+下载地址：https://dl.fbaipublicfiles.com/viit/vit_h_14_lc_swag_e2e_v1.pth (这是 Facebook 官方源)
+存放位置：下载后放在 C:\Users\你的用户名\.cache\torch\hub\checkpoints\ 下。建议先让它自动下载，实在不行再手动放。
+
+ComfyUI\custom_nodes\Laoli3D\src\hamer\data\
+MANO_LEFT.pkl
+MANO_RIGHT.pkl
+下载地址 https://mano.is.tue.mpg.de/download.php
+<img width="955" height="879" alt="屏幕截图 2026-01-01 122511" src="https://github.com/user-attachments/assets/42a42b16-c932-4620-ba42-cf32e46a6be0" />
+
+---
+
+## 📖 使用说明 (Usage)
+
+1.  **添加节点**：在 ComfyUI 中右键 -> `Laoli3D` -> `Laoli 3D Editor`。
+2.  **加载模型**：点击顶部工具栏的 `➕` 号加载 3D 角色。
+3.  **调节姿势**：
+    *   点击角色身体部位，出现旋转圆环，拖动即可调节。
+    *   点击空白处取消选择。
+4.  **AI 识别**：
+    *   将图像连接到节点的 `image` 输入端。
+    *   启用 `enable_recognition`。
+    *   运行工作流，AI 会自动分析图片并将姿势同步到 3D 小人。
+5.  **输出**：点击编辑器右上角的 `📷` 截图，节点将输出对应的 ControlNet 图像。
+
+---
+
+## 🙏 致谢 (Credits & Acknowledgements)
+
+本项目能够实现高精度的 AI 姿势识别，离不开开源社区的杰出贡献。特别感谢以下项目和作者：
+
+The AI capabilities of this project are built upon the amazing work of the research community. Special thanks to the authors of:
+
+*   **HMR2.0 (4DHumans)**: [Shubham Goel et al.](https://github.com/shubham-goel/4D-Humans)  
+    *   *Reconstructing Human People in 4D* - 用于全身姿态的高精度估计。
+*   **HaMeR**: [Georgios Pavlakos et al.](https://github.com/geopavlakos/hamer)  
+    *   *Hand Mesh Recovery* - 提供了卓越的手部重建能力。
+*   **Ultralytics YOLOv8**: [Ultralytics](https://github.com/ultralytics/ultralytics)  
+    *   用于快速精准的人物检测裁剪。
+*   **Three.js**: [mrdoob](https://github.com/mrdoob/three.js)  
+    *   强大的 Web 3D 渲染引擎。
+*   **SMPL-X & MANO**: [Max Planck Institute for Intelligent Systems](https://smpl-x.is.tue.mpg.de/)  
+    *   人体与手部参数化模型的基础。
+
+---
+
+## 📄 License
+
+本项目遵循 MIT License，但在使用 AI 模型（HMR2/HaMeR）相关功能时，请务必遵守其原始协议（通常为 CC-BY-NC 4.0，仅限非商业研究用途）。
+
+---
