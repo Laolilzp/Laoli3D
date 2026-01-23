@@ -30,7 +30,7 @@
 ## 🛠️ 安装指南 (Installation)
 
 注意：安装过程可能会遇到依赖安装困难，特别是chumpy的安装。
-建议使用金鱼大佬的纯净整合包，会降低依赖安装难度：https://pan.quark.cn/s/fc8f7e4d3c48 （只包含常用节点及加速环境的纯净整合包）
+建议使用金鱼大佬的Comfyui纯净整合包，会降低依赖安装难度：https://pan.quark.cn/s/fc8f7e4d3c48 （只包含常用节点及加速环境的纯净整合包）
 金鱼大佬的B站教程 https://space.bilibili.com/14843708
 
 ### 1. 安装插件
