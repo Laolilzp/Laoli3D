@@ -52,8 +52,8 @@ pip install -r requirements.txt
 hamer_v1a.pth下载地址 (推荐 - 德州奥斯汀大学官网直链):
 
 https://www.cs.utexas.edu/~pavlakos/hamer/data/hamer_demo_data.tar.gz
-注意：这是一个 .tar.gz 压缩包。[2]
-操作：下载后解压，在文件夹里找到 checkpoints 目录，里面会有 hamer_v1a.pth。
+注意：这是一个 .tar.gz 压缩包。
+操作：下载后解压，在文件夹里找到 checkpoints 目录，里面会有一个pth文件重命名为： hamer_v1a.pth。
 移动：只把 hamer_v1a.pth 拿出来，放到你的 ComfyUI\custom_nodes\Laoli3D\models\ 下。
 
 
