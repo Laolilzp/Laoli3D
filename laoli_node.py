@@ -331,7 +331,7 @@ class Laoli_3DPoseEditor:
                 cx_crop, cy_crop, scale_crop = crop_info
                 wrist_indices = {'right': 4, 'left': 7}
                 for side, kidx in wrist_indices.items():
-                    if hmr2_kps_2d.shape[0] > kidx and hmr2_kps_2d[kidx][2] > 0.3:
+                    if hmr2_kps_2d.shape[0] > kidx and (hmr2_kps_2d[kidx].shape[0] < 3 or hmr2_kps_2d[kidx][2] > 0.3):
                         local_x, local_y = hmr2_kps_2d[kidx][:2]
                         global_x = cx_crop + (local_x / 256.0) * scale_crop
                         global_y = cy_crop + (local_y / 256.0) * scale_crop
