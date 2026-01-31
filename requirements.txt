@@ -5,5 +5,4 @@ timm
 einops
 scikit-image
 scipy
-chumpy
 mediapipe
