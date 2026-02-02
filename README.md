@@ -26,6 +26,13 @@
 *   **📷 多通道输出**：
     *   一键输出 OpenPose 图、深度图 (Depth)、法线图 (Normal) 及蒙版。
 
+*   **待未来更新**：
+    *   · 真人形模型人物（提升编辑模型和controlnet正确识别率）
+    *   · 反向动力学控制
+    *   · 表情编辑
+    *   · 预置常用手势库、表情库
+
+
 ---
 ## 🛠️ 安装指南 (Installation)
 
@@ -45,7 +52,7 @@ cd Laoli3D
 
 pip install -r requirements.txt
 
-⚡⚡⚡有个依赖“Chumpy”比较老比较难装，因此在requirements.txt去掉了，直接将插件内的chumpy文件夹剪切粘贴至你的ComfyUI\python\Lib\site-packages\下⚡⚡⚡
+⚡⚡⚡有个依赖“Chumpy”比较老比较难装，因此在requirements.txt去掉了，请直接将插件内的chumpy文件夹剪切粘贴至你的ComfyUI\python\Lib\site-packages\下⚡⚡⚡
 
 ***
 
