@@ -44,6 +44,9 @@ git clone https://github.com/Laolilzp/Laoli3D.git
 cd Laoli3D
 
 pip install -r requirements.txt
+
+⚡⚡⚡有个依赖“Chumpy”比较老比较难装，因此在requirements.txt去掉了，直接将插件内的chumpy文件夹剪切粘贴至你的ComfyUI\python\Lib\site-packages\下⚡⚡⚡
+
 ***
 
 ### 2. 模型下载
@@ -56,7 +59,7 @@ hamer_v1a.pth下载地址 (推荐 - 德州奥斯汀大学官网直链):
 
 https://www.cs.utexas.edu/~pavlakos/hamer/data/hamer_demo_data.tar.gz
 注意：这是一个 .tar.gz 压缩包。
-操作：下载后解压，在文件夹里找到 checkpoints 目录，里面会有一个pth文件重命名为： hamer_v1a.pth。
+操作：下载后解压，在文件夹里找到 checkpoints 目录，里面会有一个pth文件（2.5G左右大小）重命名为： hamer_v1a.pth。
 移动：只把 hamer_v1a.pth 拿出来，放到你的 ComfyUI\custom_nodes\Laoli3D\models\ 下。
 
 
